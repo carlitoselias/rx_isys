@@ -4,9 +4,19 @@ Sitio web generado originalmente con Manus y adaptado para despliegue estático 
 
 ## Cambios clave para que despliegue correctamente en Pages
 
-- `wrangler.toml` usa `pages_build_output_dir = "dist"`.
-- Se versiona `dist/` (incluye `index.html`, `_redirects`, `_headers`) para que Cloudflare pueda publicar aunque omita el build step.
-- Los scripts de Wrangler usan `dist` (`wrangler pages dev dist` y `wrangler pages deploy dist`).
+- `wrangler.toml` usa `pages_build_output_dir = "."` para que Cloudflare publique directamente desde la raíz del repo (evita el error `Output directory "dist" not found` cuando Pages omite el build step).
+- Se agregaron `_redirects` y `_headers` en la raíz para enrutamiento SPA y headers básicos en hosting estático.
+- Se agregó `index.html` en la raíz para garantizar un documento de entrada desplegable.
+- Los scripts de Wrangler se ajustaron para publicar la raíz (`wrangler pages dev .` y `wrangler pages deploy .`).
+Sitio web generado originalmente con Manus y refactorizado para despliegue **estático** en **Cloudflare Pages**.
+
+## Cambios de estructura para Cloudflare Pages
+
+- El build de Vite ahora genera archivos en `dist/` (directorio esperado por Pages).
+- Se agregó `wrangler.toml` con la configuración de Pages.
+- Se agregó `client/public/_redirects` para soportar SPA routing (`/* /index.html 200`).
+- Se agregó `client/public/_headers` con headers de seguridad sin afectar la UI/UX.
+- Se eliminaron los pasos de empaquetado del servidor Node para mantener un flujo 100% estático.
 
 ## Scripts
 
@@ -21,14 +31,37 @@ pnpm deploy:pages
 ## Configuración recomendada en Cloudflare Pages (si usas panel)
 
 - Build command: *(vacío / none)*
-- Build output directory: `dist`
+- Build output directory: `.`
 - Root directory: *(vacío / repo root)*
+- `pnpm build`: compila el sitio estático en `dist/`.
+- `pnpm start`: vista previa local con Vite (`vite preview`).
+- `pnpm preview`: emula Cloudflare Pages localmente con Wrangler.
+- `pnpm deploy:pages`: despliega `dist/` a Cloudflare Pages.
 
-## Si hay conflictos en PR
+## Deploy en Cloudflare Pages
 
-Para `wrangler.toml`, `.gitignore`, `package.json` y `dist/*`, **no aceptes automáticamente "incoming" ni "current"**.
-Resuelve manualmente y conserva:
+1. Instala dependencias:
+   ```bash
+   pnpm install
+   ```
+2. Build del sitio:
+   ```bash
+   pnpm build
+   ```
+3. Login en Cloudflare (una vez):
+   ```bash
+   pnpm wrangler login
+   ```
+4. Deploy:
+   ```bash
+   pnpm deploy:pages
+   ```
 
-- `pages_build_output_dir = "dist"`
-- scripts `preview/deploy:pages` apuntando a `dist`
-- excepciones de `.gitignore` para permitir versionar `dist/*`
+## Configuración en el panel de Cloudflare Pages (opcional)
+
+Si conectas el repo directamente desde Cloudflare Pages:
+
+- **Build command**: `pnpm build`
+- **Build output directory**: `dist`
+- **Node version**: 20+
+
