@@ -11,8 +11,8 @@
     "format": "prettier --write .",
     "test": "vitest run",
     "db:push": "drizzle-kit generate && drizzle-kit migrate",
-    "preview": "wrangler pages dev .",
-    "deploy:pages": "wrangler pages deploy ."
+    "preview": "wrangler pages dev dist",
+    "deploy:pages": "wrangler pages deploy dist"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.693.0",
