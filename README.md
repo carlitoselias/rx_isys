@@ -6,7 +6,6 @@ Sitio web generado originalmente con Manus y refactorizado para despliegue **est
 
 - El build de Vite ahora genera archivos en `dist/` (directorio esperado por Pages).
 - Se agregó `wrangler.toml` con la configuración de Pages.
-- `wrangler.toml` ahora define también `[build].command = "pnpm build"` para que Cloudflare Pages no omita la etapa de build.
 - Se agregó `client/public/_redirects` para soportar SPA routing (`/* /index.html 200`).
 - Se agregó `client/public/_headers` con headers de seguridad sin afectar la UI/UX.
 - Se eliminaron los pasos de empaquetado del servidor Node para mantener un flujo 100% estático.
